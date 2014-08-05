@@ -34,7 +34,6 @@
     MAActionCell *firstCell = [MAActionCell actionCellWithTitle:@"Push something" subtitle:@"Push it!!" action:^{
         [self pushSomething];
     }];
-    firstCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     MAActionCell *secondCell = [MAActionCell actionCellWithTitle:@"Change something" subtitle:@"Whoa..." action:^{
         [self changeSomething];
