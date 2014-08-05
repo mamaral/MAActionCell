@@ -3,6 +3,8 @@ MAActionCell
 
 MAActionCell is intended to be used with the MATableViewSection object to hugely simplify and consolidate all of the logic surrounding creating static UITableViews and handling the data source and delegate logic. No more if-statements or switches in every delegate/data source function determining which section has which title/header/height and which row is going to be associated with which cell/action.
 
+While this makes creating a static table view controller much faster and easier without the need for all the repeated logic, it also makes it extremely easy to change the table view layout later to add, remove, or move cells and sections as the data source and delegate functions can remain unchanged - the only thing that needs to be updated is the generation of the cells/sections themselves.
+
 
 Usage
 =====
