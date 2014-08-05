@@ -1,71 +1,108 @@
-MAPageViewController
+MAActionCell
 ==================
 
-MAPageViewController is a simple wrapper around the most common boiler-plate UIPageViewController setup.
+MAActionCell is intended to be used with the MATableViewSection object to hugely simplify and consolidate all of the logic surrounding creating static UITableViews and handling the data source and delegate logic. No more if-statements or switches in every delegate/data source function determining which section has which title/header/height and which row is going to be associated with which cell/action.
 
 
 Usage
 =====
 
-Simply initilize a MAPageViewController with an array of view controllers, and treat it like any other UIPageViewController, add it as root view controller of your project, wrap it in a navigation controller and present it modally, or do anything else with it that you could do with a view controller.
+Create instances of MAActionCells by defining the titles, subtitles, and action blocks for each, then package them all up into MATableViewSections defining either the title for the section or the header view and associated height for the section, then package up each section in an array in the order you want the sections to be displayed, and in each delegate/data source function reference your array of sections and section objects directly without having to implement any logic to check the section/row.
 
+Generate the cells and sections ahead of time:
 
-Swift
-=====
 
 ```js
-let redVC: UIViewController = UIViewController()
-redVC.view.backgroundColor = UIColor.redColor()
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // generate the table view in view did load
+    [self generateTableView];
+}
 
-let blueVC: UIViewController = UIViewController()
-blueVC.view.backgroundColor = UIColor.blueColor()
+- (void)generateTableView {
+    // Create the cells with their titles, subtitles, and do whatever you want in each cell's
+    // respective action block. You can customize the cells just like you would normally do with
+    // any other tableview cell to add imageViews, accessoryViews, etc.
+    MAActionCell *firstCell = [MAActionCell actionCellWithTitle:@"Push something" subtitle:@"Push it!!" action:^{
+        [self pushSomething];
+    }];
+    firstCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-let greenVC: UIViewController = UIViewController()
-greenVC.view.backgroundColor = UIColor.greenColor()
+    MAActionCell *secondCell = [MAActionCell actionCellWithTitle:@"Change something" subtitle:@"Whoa..." action:^{
+        [self changeSomething];
+    }];
 
-let orangeVC: UIViewController = UIViewController()
-orangeVC.view.backgroundColor = UIColor.orangeColor()
+    MAActionCell *thirdCell = [MAActionCell actionCellWithTitle:@"Say something" subtitle:@"Hello?" action:^{
+        [self saySomething];
+    }];
 
-let brownVC: UIViewController = UIViewController()
-brownVC.view.backgroundColor = UIColor.brownColor()
+    MAActionCell *fourthCell = [MAActionCell actionCellWithTitle:@"Choose something" subtitle:@"Decisions... Decisions..." action:^{
+        [self chooseSomething];
+    }];
 
-let yellowVC: UIViewController = UIViewController()
-yellowVC.view.backgroundColor = UIColor.yellowColor()
+    // create the sections either with a title or a view/height
+    MATableViewSection *firstSection = [MATableViewSection sectionWithTitle:@"This is the first section!" cells:@[firstCell]];
+    MATableViewSection *secondSection = [MATableViewSection sectionWithTitle:@"Second section here!" cells:@[secondCell, thirdCell]];
 
-let viewControllers: UIViewController[] = [redVC, blueVC, greenVC, orangeVC, brownVC, yellowVC]
-self.window!.rootViewController = MAPageViewController(viewControllers: viewControllers)
+    UIImageView *headerImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"kittens.jpg"]];
+    MATableViewSection *thirdSection = [MATableViewSection sectionWithView:headerImageView height:80 cells:@[fourthCell]];
+
+    // create an array from these sections using a property/instance var so you
+    // can access them later in the delegate/data source functions
+    _sections = @[firstSection, secondSection, thirdSection];
+}
 
 ```
 
-Objective-C
-=====
+Then you can simply reference your section array directly to access everything directly in the data source/delegate functions:
 
 ```js
-UIViewController *redVC = [UIViewController new];
-redVC.view.backgroundColor = [UIColor redColor];
+#pragma mark - Table view data source
 
-UIViewController *blueVC = [UIViewController new];
-blueVC.view.backgroundColor = [UIColor blueColor];
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return _sections.count;
+}
 
-UIViewController *greenVC = [UIViewController new];
-greenVC.view.backgroundColor = [UIColor greenColor];
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    MATableViewSection *mySection = _sections[section];
+    return mySection.cells.count;
+}
 
-UIViewController *orangeVC = [UIViewController new];
-orangeVC.view.backgroundColor = [UIColor orangeColor];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    MATableViewSection *mySection = _sections[section];
+    return mySection.headerView;
+}
 
-UIViewController *brownVC = [UIViewController new];
-brownVC.view.backgroundColor = [UIColor brownColor];
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    MATableViewSection *mySection = _sections[section];
+    return mySection.headerHeight;
+}
 
-UIViewController *yellowVC = [UIViewController new];
-yellowVC.view.backgroundColor = [UIColor yellowColor];
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    MATableViewSection *mySection = _sections[section];
+    return mySection.title;
+}
 
-NSArray *viewControllers = @[redVC, blueVC, greenVC, orangeVC, brownVC, yellowVC];
-self.window.rootViewController = [MAPageViewController alloc] initWithViewControllers:viewControllers];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    MATableViewSection *mySection = _sections[indexPath.section];
+    return mySection.cells[indexPath.row];
+}
+
+
+#pragma  mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    MATableViewSection *mySection = _sections[indexPath.section];
+    MAActionCell *selectedCell = mySection.cells[indexPath.row];
+    selectedCell.actionBlock();
+}
 
 ```
 
-
-![demo](screenshots/page_demo.gif)
+![demo](screenshots/demo.gif)
 
 
 License
