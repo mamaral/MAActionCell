@@ -7,7 +7,11 @@ MAActionCell is intended to be used with the MATableViewSection object to hugely
 Usage
 =====
 
-Create instances of MAActionCells by defining the titles, subtitles, and action blocks for each, then package them all up into MATableViewSections defining either the title for the section or the header view and associated height for the section, then package up each section in an array in the order you want the sections to be displayed, and in each delegate/data source function reference your array of sections and section objects directly without having to implement any logic to check the section/row.
+1. Drop MAActionCell.h/m and MATableViewSection.h/m into your table view file. 
+2. Create instances of MAActionCells by defining the titles, subtitles, and action blocks for each. 
+3. Package them all up into MATableViewSections defining either the title for the section or the header view and associated height for the section. 
+4. Package up each section in an array in the order you want the sections to be displayed.
+5. In each delegate/data source function reference your array of sections and section objects directly without having to implement any logic to check the section/row.
 
 Generate the cells and sections ahead of time:
 
