@@ -77,7 +77,7 @@
 }
 
 - (void)chooseSomething {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Rate this app:" delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Great App", @"Greatest App", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Rate This App" delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Great App", @"Greatest App", nil];
     [actionSheet showInView:self.view];
 }
 
